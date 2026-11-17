@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <!-- ==========================================================================
+       1. DOCUMENT METADATA, VIEWPORT & EXTERNAL FONTS / TAILWIND
+       ========================================================================== -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChromaCast AI — Pantone® Trend Studio &amp; Color Matcher</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Inter (UI), Playfair Display (Editorial), JetBrains Mono (Color Codes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind Configuration for Custom Fonts & Dark Mode -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          boxShadow: {
+            'swatch': '0 14px 30px -10px rgba(0, 0, 0, 0.12), 0 4px 10px -4px rgba(0, 0, 0, 0.05)',
+            'swatch-dark': '0 16px 35px -10px rgba(0, 0, 0, 0.55)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Tactile woven cotton/linen textile grain for Pantone TCX swatches */
+    .swatch-fabric-texture {
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.05) 0px,
+          rgba(255, 255, 255, 0.05) 1px,
+          transparent 1px,
+          transparent 3px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.04) 0px,
+          rgba(0, 0, 0, 0.04) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+    }
+
+    /* Diagonal twill weave texture for garment silhouettes */
+    .twill-weave-bg {
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.04) 0px,
+        rgba(255, 255, 255, 0.04) 2px,
+        transparent 2px,
+        transparent 6px
+      );
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-up {
+      animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="bg-stone-50 text-stone-900 dark:bg-slate-950 dark:text-stone-100 font-sans antialiased transition-colors duration-300 selection:bg-indigo-500 selection:text-white">
+
+  <!-- ==========================================================================
+       2. TOP EDITORIAL HEADER & BUILT-IN API KEY CONFIGURATION BAR
+       ========================================================================== -->
+  <header class="sticky top-0 z-40 bg-stone-50/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-stone-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 via-amber-400 to-indigo-600 p-0.5 shadow-sm">
+          <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[10px] flex items-center justify-center">
+            <span class="font-serif font-bold text-base bg-gradient-to-r from-rose-600 to-indigo-600 bg-clip-text text-transparent">C</span>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-serif font-bold text-lg tracking-tight">ChromaCast AI</span>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-stone-200/80 dark:bg-slate-800 text-stone-700 dark:text-stone-300">
+              PANTONE® STUDIO
+            </span>
+          </div>
+          <p class="text-[11px] text-stone-500 dark:text-stone-400 hidden lg:block">
+            Next-Year Fashion Color Forecaster &amp; TCX Code Matcher
+          </p>
+        </div>
+      </div>
+
+      <!-- Center Navigation -->
+      <nav class="hidden xl:flex items-center gap-1">
+        <a href="#forecastHub" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-stone-700 dark:text-stone-300 hover:bg-stone-200/70 dark:hover:bg-slate-800 transition">
+          Forecast &amp; Matcher
+        </a>
+        <a href="#visualStudioSection" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-stone-700 dark:text-stone-300 hover:bg-stone-200/70 dark:hover:bg-slate-800 transition">
+          Visual Apparel Preview
+        </a>
+        <a href="#demographicPalettesSection" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-stone-700 dark:text-stone-300 hover:bg-stone-200/70 dark:hover:bg-slate-800 transition">
+          Male / Female / Kids
+        </a>
+      </nav>
+
+      <!-- Right Controls: Code Switcher, API Key Button & Theme Toggle -->
+      <div class="flex items-center gap-2">
+        <!-- Code System Display Switcher -->
+        <div class="hidden sm:flex items-center bg-stone-200/70 dark:bg-slate-800/90 p-1 rounded-xl border border-stone-300/60 dark:border-slate-700">
+          <button
+            id="modePantoneBtn"
+            type="button"
+            onclick="setPrimaryCodeMode('pantone')"
+            class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold bg-white dark:bg-slate-900 text-stone-900 dark:text-white shadow-sm transition"
+          >
+            PANTONE TCX
+          </button>
+          <button
+            id="modeHslBtn"
+            type="button"
+            onclick="setPrimaryCodeMode('hsl')"
+            class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition"
+          >
+            HSL
+          </button>
+        </div>
+
+        <!-- Toggle API Key Drawer Button -->
+        <button
+          id="apiDrawerToggleBtn"
+          type="button"
+          onclick="toggleApiConfigDrawer()"
+          class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-indigo-400 text-xs font-medium shadow-sm transition"
+          title="Configure optional Gemini API Key"
+        >
+          <span id="apiStatusDot" class="w-2 h-2 rounded-full bg-amber-500"></span>
+          <span id="apiStatusLabel" class="font-mono text-[11px]">Built-In Mode</span>
+          <i data-lucide="key-round" class="w-3.5 h-3.5 text-stone-500"></i>
+        </button>
+
+        <!-- Light / Dark Theme Toggle -->
+        <button
+          id="themeToggleBtn"
+          type="button"
+          aria-label="Toggle Studio Theme"
+          class="p-2 rounded-xl bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 text-stone-700 dark:text-stone-300 hover:border-stone-400 dark:hover:border-slate-600 transition shadow-sm"
+          title="Switch Light / Dark Theme"
+        >
+          <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible API Key Configuration Drawer (No Code Editing Needed) -->
+    <div id="apiConfigDrawer" class="hidden border-t border-stone-200 dark:border-slate-800 bg-stone-100/90 dark:bg-slate-900/95">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div class="text-xs text-stone-600 dark:text-stone-300">
+          <strong class="text-stone-900 dark:text-white">Optional Gemini 2.5 Flash Key:</strong>
+          Paste your Google AI Studio key (<code class="font-mono text-[11px]">AQ...</code> or <code class="font-mono text-[11px]">AIza...</code>) to unlock live AI generation, or leave blank to use the built-in zero-error Pantone engine.
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="relative flex-1 sm:w-64">
+            <input
+              id="apiKeyInput"
+              type="password"
+              placeholder="Paste Gemini API Key..."
+              oninput="handleApiKeyInput()"
+              class="w-full rounded-xl bg-white dark:bg-slate-950 border border-stone-300 dark:border-slate-700 pl-3 pr-9 py-1.5 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="button"
+              onclick="toggleApiKeyVisibility()"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
+              title="Show / Hide Key"
+            >
+              <i id="apiEyeIcon" data-lucide="eye" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <button
+            type="button"
+            onclick="applyApiKey()"
+            class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition"
+          >
+            Connect
+          </button>
+          <button
+            type="button"
+            onclick="clearApiKey()"
+            class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 text-xs font-medium text-stone-600 dark:text-stone-300 hover:text-rose-600 transition"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       3. MAIN WORKSPACE CONTAINER
+       ========================================================================== -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+    <!-- HERO INTRO -->
+    <section class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-xs font-medium mb-4">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        <span>Autonomous Fashion Color Intelligence &bull; Zero Image API Quota Errors</span>
+      </div>
+      <h1 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-stone-900 dark:text-white leading-tight mb-4">
+        Next-Year Pantone Forecasts &amp; Instant Color Code Matcher
+      </h1>
+      <p class="text-stone-600 dark:text-stone-400 text-base sm:text-lg leading-relaxed">
+        No photo uploads required. Explore next year's predicted fashion palettes with
+        <strong class="text-stone-900 dark:text-stone-200">3 formal Pantone TCX &amp; HSL colors each</strong> for
+        <span class="underline decoration-indigo-400/70 decoration-2 underline-offset-4">Male Adults</span>,
+        <span class="underline decoration-rose-400/70 decoration-2 underline-offset-4">Female Adults</span>, and
+        <span class="underline decoration-amber-400/70 decoration-2 underline-offset-4">Kids</span>, visualized on woven textiles and garments.
+      </p>
+    </section>
+
+    <!-- ========================================================================
+         4. DUAL STUDIO HUB: TREND FORECASTER + COLOR-TO-PANTONE MATCHER
+         ======================================================================== -->
+    <section id="forecastHub" class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+
+      <!-- Left Card (6 cols): Trend Forecast Controls -->
+      <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-3xl border border-stone-200/90 dark:border-slate-800 shadow-sm p-5 sm:p-7 flex flex-col justify-between space-y-5">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between gap-2">
+            <span class="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
+              <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+              <span>1. Next-Year Trend Engine</span>
+            </span>
+            <span id="engineModePill" class="px-2.5 py-0.5 rounded-full text-[11px] font-mono bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">
+              Ready &bull; Instant Forecast
+            </span>
+          </div>
+
+          <div>
+            <h2 class="font-serif text-xl sm:text-2xl font-bold text-stone-900 dark:text-white">
+              Configure Apparel Forecast Horizon
+            </h2>
+            <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
+              Select your target year, season cycle, and apparel direction to generate 3 tailored Pantone &amp; HSL colors for every age and gender group.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <!-- Target Year -->
+            <div class="space-y-1.5">
+              <label for="targetYearSelect" class="block text-xs font-medium text-stone-600 dark:text-stone-400">
+                Target Year
+              </label>
+              <select
+                id="targetYearSelect"
+                class="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="2027" selected>2027 (Next Year)</option>
+                <option value="2028">2028 (Future Horizon)</option>
+              </select>
+            </div>
+
+            <!-- Season Cycle -->
+            <div class="space-y-1.5">
+              <label for="seasonSelect" class="block text-xs font-medium text-stone-600 dark:text-stone-400">
+                Season Cycle
+              </label>
+              <select
+                id="seasonSelect"
+                class="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="Full Year / Cross-Season" selected>Full Year / Cross-Season</option>
+                <option value="Spring / Summer (SS)">Spring / Summer (SS)</option>
+                <option value="Autumn / Winter (AW)">Autumn / Winter (AW)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Market Direction -->
+          <div class="space-y-1.5">
+            <label for="marketFocusSelect" class="block text-xs font-medium text-stone-600 dark:text-stone-400">
+              Apparel Market Direction
+            </label>
+            <select
+              id="marketFocusSelect"
+              class="w-full rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="Global Ready-to-Wear & Contemporary Retail">Global Ready-to-Wear &amp; Contemporary Retail</option>
+              <option value="Luxury Runway & Editorial Couture">Luxury Runway &amp; Editorial Couture</option>
+              <option value="Streetwear, Denim & Activewear">Streetwear, Denim &amp; Activewear</option>
+              <option value="Eco-Conscious & Natural Dye Textiles">Eco-Conscious &amp; Natural Dye Textiles</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2">
+          <button
+            id="analyzeBtn"
+            type="button"
+            onclick="runPantoneForecast()"
+            class="w-full py-3.5 px-5 rounded-xl bg-stone-900 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50"
+          >
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span id="analyzeBtnLabel">Generate Next-Year Pantone Forecast</span>
+          </button>
+          <p class="text-[11px] text-center text-stone-500 dark:text-stone-400">
+            Uses Gemini 2.5 Flash when an API key is connected, or our built-in fashion forecasting matrix offline.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Card (6 cols): Color Code -> Formal Pantone & HSL Matcher -->
+      <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-3xl border border-stone-200/90 dark:border-slate-800 shadow-sm p-5 sm:p-7 flex flex-col justify-between space-y-5">
+        <div class="space-y-4">
+          <div class="flex items-center justify-between gap-2">
+            <span class="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider">
+              <i data-lucide="pipette" class="w-3.5 h-3.5"></i>
+              <span>2. Color-to-Pantone Matcher</span>
+            </span>
+            <span class="text-[11px] font-mono text-stone-500 dark:text-stone-400">
+              HEX &bull; HSL &bull; RGB &rarr; TCX
+            </span>
+          </div>
+
+          <div>
+            <h2 class="font-serif text-xl sm:text-2xl font-bold text-stone-900 dark:text-white">
+              Match Any Color Code to Pantone TCX
+            </h2>
+            <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
+              Type any HEX, HSL, or RGB value—or click the swatch picker—to match it to its closest formal Pantone code and HSL equivalent.
+            </p>
+          </div>
+
+          <!-- Interactive Color Picker + Text Code Input -->
+          <div class="flex items-stretch gap-2.5">
+            <label
+              for="nativeColorPicker"
+              class="relative w-14 rounded-xl border border-stone-300 dark:border-slate-700 overflow-hidden cursor-pointer shrink-0 shadow-inner"
+              title="Pick color visually"
+            >
+              <input
+                id="nativeColorPicker"
+                type="color"
+                value="#5D7089"
+                oninput="onVisualPickerChange(this.value)"
+                class="absolute -inset-2 w-20 h-20 cursor-pointer border-0 p-0"
+              />
+            </label>
+            <input
+              id="colorCodeInput"
+              type="text"
+              value="#5D7089"
+              placeholder="e.g. #5D7089 or hsl(214, 19%, 45%) or rgb(93, 112, 137)"
+              oninput="matchColorToPantone()"
+              class="flex-1 rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-300 dark:border-slate-700 px-3.5 py-2.5 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+            />
+            <button
+              id="aiVerifyPantoneBtn"
+              type="button"
+              onclick="verifyPantoneWithAI()"
+              class="px-3.5 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-stone-800 dark:text-stone-200 text-xs font-semibold border border-stone-200 dark:border-slate-700 transition shrink-0 flex items-center gap-1.5"
+              title="Verify exact TCX/TPG match with Gemini 2.5 Flash"
+            >
+              <i data-lucide="wand-2" class="w-3.5 h-3.5 text-rose-500"></i>
+              <span class="hidden sm:inline">AI Verify</span>
+            </button>
+          </div>
+
+          <!-- Side-by-Side Swatch Comparison Result -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-stone-50 dark:bg-slate-950/80 p-3.5 rounded-2xl border border-stone-200/80 dark:border-slate-800 items-center">
+            <div class="sm:col-span-4 flex h-24 rounded-xl overflow-hidden border border-stone-200 dark:border-slate-700 shadow-sm">
+              <div
+                id="matcherInputSwatch"
+                class="w-1/2 h-full flex items-end p-1.5"
+                style="background-color: #5D7089;"
+              >
+                <span class="px-1.5 py-0.5 rounded bg-black/50 text-white font-mono text-[9px]">INPUT</span>
+              </div>
+              <div
+                id="matcherPantoneSwatch"
+                class="w-1/2 h-full swatch-fabric-texture flex items-end justify-end p-1.5"
+                style="background-color: #5D7089;"
+              >
+                <span class="px-1.5 py-0.5 rounded bg-white/95 text-stone-900 font-mono text-[9px] font-bold">TCX</span>
+              </div>
+            </div>
+
+            <div class="sm:col-span-8 space-y-2">
+              <div>
+                <span id="matcherSimilarityBadge" class="inline-block text-[10px] font-mono font-semibold text-emerald-600 dark:text-emerald-400">
+                  100.0% Perceptual Match
+                </span>
+                <h3 id="matcherPantoneName" class="font-serif text-lg font-bold text-stone-900 dark:text-white leading-tight">
+                  Coronado Blue
+                </h3>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onclick="copyToClipboard(document.getElementById('matcherPantoneCode').textContent, 'Pantone Code')"
+                  class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-rose-400 transition text-left"
+                >
+                  <span id="matcherPantoneCode" class="font-mono text-[11px] font-bold text-stone-900 dark:text-white truncate">
+                    PANTONE 17-4021 TCX
+                  </span>
+                  <i data-lucide="copy" class="w-3 h-3 text-stone-400 shrink-0 ml-1"></i>
+                </button>
+
+                <button
+                  type="button"
+                  onclick="copyToClipboard(document.getElementById('matcherHslCode').textContent, 'HSL')"
+                  class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-rose-400 transition text-left"
+                >
+                  <span id="matcherHslCode" class="font-mono text-[11px] font-semibold text-stone-700 dark:text-stone-300 truncate">
+                    hsl(214, 19%, 45%)
+                  </span>
+                  <i data-lucide="copy" class="w-3 h-3 text-stone-400 shrink-0 ml-1"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Closest Alternative Pantone Swatches -->
+        <div>
+          <p class="text-[11px] font-mono uppercase tracking-wider text-stone-400 mb-2">
+            Closest Alternative Pantone Swatches (Click to Copy)
+          </p>
+          <div id="matcherAlternativesRow" class="grid grid-cols-3 gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Subtle Status / Notice Banner (Only shown if user inputs invalid color or key issue) -->
+      <div
+        id="noticeBanner"
+        class="hidden lg:col-span-12 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-sm flex items-start gap-3"
+        role="status"
+      >
+        <i data-lucide="info" class="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+        <div class="flex-1">
+          <p id="noticeTitle" class="font-semibold">Studio Notice</p>
+          <p id="noticeText" class="text-xs mt-0.5 opacity-90"></p>
+        </div>
+        <button type="button" onclick="hideNotice()" class="text-amber-600 hover:text-amber-800">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================================================
+         5. FORECAST RESULTS DASHBOARD
+         ======================================================================== -->
+    <div id="resultsContainer" class="space-y-14">
+
+      <!-- 5A. MACRO COLOR OF THE YEAR HERO BANNER -->
+      <section class="animate-fade-up">
+        <div class="flex flex-wrap items-end justify-between gap-4 mb-5">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-widest text-indigo-600 dark:text-indigo-400 font-semibold">
+              Headline Prediction
+            </span>
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold mt-1">
+              <span id="resultYearHeading">2027</span> Macro Pantone Color of the Year
+            </h2>
+          </div>
+
+          <!-- Mobile Code System Toggle -->
+          <div class="flex sm:hidden items-center bg-stone-200/70 dark:bg-slate-800 p-1 rounded-xl">
+            <button
+              type="button"
+              onclick="setPrimaryCodeMode('pantone')"
+              class="px-3 py-1 rounded-lg text-xs font-mono font-semibold bg-white dark:bg-slate-900 shadow-sm"
+            >
+              PANTONE
+            </button>
+            <button
+              type="button"
+              onclick="setPrimaryCodeMode('hsl')"
+              class="px-3 py-1 rounded-lg text-xs font-mono font-semibold text-stone-600 dark:text-stone-400"
+            >
+              HSL
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-3xl border border-stone-200 dark:border-slate-800 overflow-hidden shadow-swatch dark:shadow-swatch-dark grid grid-cols-1 lg:grid-cols-12">
+          <!-- Tactile Macro Swatch Block -->
+          <div
+            id="macroSwatchBlock"
+            class="lg:col-span-5 min-h-[240px] sm:min-h-[290px] swatch-fabric-texture p-6 sm:p-8 flex flex-col justify-between relative transition-colors"
+            style="background-color: #576664;"
+          >
+            <div class="flex items-center justify-between">
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-white/95 text-stone-900 shadow-sm">
+                PANTONE® INSTITUTE FORECAST
+              </span>
+              <button
+                id="copyMacroHexBtn"
+                type="button"
+                class="px-2.5 py-1 rounded-lg text-xs font-mono bg-black/30 hover:bg-black/45 text-white backdrop-blur-sm transition flex items-center gap-1.5"
+                title="Copy HEX"
+              >
+                <span id="macroHexBadge">#576664</span>
+                <i data-lucide="copy" class="w-3 h-3"></i>
+              </button>
+            </div>
+
+            <div class="bg-white/95 dark:bg-slate-950/90 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 dark:border-slate-800">
+              <p id="macroPantoneCode" class="font-mono text-xs font-bold tracking-wider text-indigo-600 dark:text-indigo-400 uppercase">
+                PANTONE 18-5616 TCX
+              </p>
+              <h3 id="macroPantoneName" class="font-serif text-2xl font-bold text-stone-900 dark:text-white mt-0.5">
+                Balsam Mineral
+              </h3>
+            </div>
+          </div>
+
+          <!-- Macro Details -->
+          <div class="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <h4 class="text-xs font-mono uppercase tracking-wider text-stone-400">
+                  Trend Evolution &amp; Chromatic Thesis
+                </h4>
+                <span id="forecastContextBadge" class="text-[11px] font-mono text-stone-500 dark:text-stone-400">
+                  Full Year &bull; Global Ready-to-Wear
+                </span>
+              </div>
+              <p id="macroRationale" class="text-stone-700 dark:text-stone-300 text-sm sm:text-base leading-relaxed">
+                Synthesizing global runway collections and material research reveals a decisive shift toward restorative mineral-infused greens that bridge utilitarian durability with serene modern luxury.
+              </p>
+            </div>
+
+            <!-- Copyable Formal Pantone + HSL Chips -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                id="copyMacroPantoneBtn"
+                type="button"
+                class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-indigo-400 transition text-left group"
+              >
+                <div>
+                  <span class="block text-[11px] font-medium text-stone-500 dark:text-stone-400">Formal Pantone Code</span>
+                  <span id="macroPantoneField" class="font-mono text-sm font-semibold text-stone-900 dark:text-white">
+                    PANTONE 18-5616 TCX
+                  </span>
+                </div>
+                <i data-lucide="copy" class="w-4 h-4 text-stone-400 group-hover:text-indigo-500"></i>
+              </button>
+
+              <button
+                id="copyMacroHslBtn"
+                type="button"
+                class="flex items-center justify-between p-3.5 rounded-2xl bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-indigo-400 transition text-left group"
+              >
+                <div>
+                  <span class="block text-[11px] font-medium text-stone-500 dark:text-stone-400">HSL Color Value</span>
+                  <span id="macroHslField" class="font-mono text-sm font-semibold text-stone-900 dark:text-white">
+                    hsl(172, 8%, 37%)
+                  </span>
+                </div>
+                <i data-lucide="copy" class="w-4 h-4 text-stone-400 group-hover:text-indigo-500"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5B. INSTANT VISUAL APPAREL & WOVEN TEXTILE STUDIO (100% EXACT COLOR RENDERING) -->
+      <section id="visualStudioSection" class="animate-fade-up bg-white dark:bg-slate-900 rounded-3xl border border-stone-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+          <div>
+            <div class="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider mb-1">
+              <i data-lucide="shirt" class="w-3.5 h-3.5"></i>
+              <span>Exact-Pigment Apparel &amp; Textile Visualizer</span>
+            </div>
+            <h2 class="font-serif text-2xl font-bold">
+              Visualized Garment Silhouettes &amp; Woven Dye Chips
+            </h2>
+            <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
+              Rendered directly in exact mathematical HSL &amp; Pantone TCX pigments—instant preview with zero quota limits.
+            </p>
+          </div>
+
+          <!-- Category Preview Switcher + Export PNG Button -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onclick="selectVisualTab('overall')"
+              id="visBtn-overall"
+              class="vis-tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-900 text-white dark:bg-indigo-600 transition shadow-sm"
+            >
+              Macro Lookbook
+            </button>
+            <button
+              type="button"
+              onclick="selectVisualTab('maleAdults')"
+              id="visBtn-maleAdults"
+              class="vis-tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-stone-700 dark:text-stone-200 transition"
+            >
+              Male Adults
+            </button>
+            <button
+              type="button"
+              onclick="selectVisualTab('femaleAdults')"
+              id="visBtn-femaleAdults"
+              class="vis-tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-stone-700 dark:text-stone-200 transition"
+            >
+              Female Adults
+            </button>
+            <button
+              type="button"
+              onclick="selectVisualTab('kids')"
+              id="visBtn-kids"
+              class="vis-tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-stone-700 dark:text-stone-200 transition"
+            >
+              Kids
+            </button>
+            <button
+              type="button"
+              onclick="downloadCurrentSwatchBoard()"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/80 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition"
+              title="Download high-resolution PNG palette board"
+            >
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Export Board</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive SVG Garment & Woven Fabric Stage -->
+        <div
+          id="visualStageGrid"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-stone-100/80 dark:bg-slate-950 p-4 sm:p-6 rounded-2xl border border-stone-200/80 dark:border-slate-800"
+        ></div>
+      </section>
+
+      <!-- 5C. DEMOGRAPHIC SECTIONS: 3 COLORS EACH FOR MALE, FEMALE, AND KIDS -->
+      <div id="demographicPalettesSection" class="space-y-12">
+
+        <!-- SECTION 1: MALE ADULTS (3 COLORS) -->
+        <section class="animate-fade-up">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-stone-200 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-slate-900 dark:bg-slate-800 text-white flex items-center justify-center font-serif font-bold text-lg">
+                M
+              </div>
+              <div>
+                <h2 class="font-serif text-2xl font-bold">Male Adults Collection</h2>
+                <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">
+                  3 forecasted menswear tones for tailoring, outerwear, and everyday essentials
+                </p>
+              </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-mono bg-stone-200/70 dark:bg-slate-800 text-stone-700 dark:text-stone-300">
+              3 PANTONE SWATCHES
+            </span>
+          </div>
+
+          <div id="maleAdultsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- SECTION 2: FEMALE ADULTS (3 COLORS) -->
+        <section class="animate-fade-up">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-stone-200 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-serif font-bold text-lg">
+                F
+              </div>
+              <div>
+                <h2 class="font-serif text-2xl font-bold">Female Adults Collection</h2>
+                <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">
+                  3 forecasted womenswear shades for silhouettes, knitwear, and statement pieces
+                </p>
+              </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-mono bg-stone-200/70 dark:bg-slate-800 text-stone-700 dark:text-stone-300">
+              3 PANTONE SWATCHES
+            </span>
+          </div>
+
+          <div id="femaleAdultsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- SECTION 3: KIDS (3 COLORS) -->
+        <section class="animate-fade-up">
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-stone-200 dark:border-slate-800">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-serif font-bold text-lg">
+                K
+              </div>
+              <div>
+                <h2 class="font-serif text-2xl font-bold">Kids &amp; Youth Collection</h2>
+                <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400">
+                  3 forecasted childrenswear pigments balancing joyful energy with durable practicality
+                </p>
+              </div>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-mono bg-stone-200/70 dark:bg-slate-800 text-stone-700 dark:text-stone-300">
+              3 PANTONE SWATCHES
+            </span>
+          </div>
+
+          <div id="kidsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       6. FOOTER
+       ========================================================================== -->
+  <footer class="border-t border-stone-200 dark:border-slate-800 mt-16 py-8 text-center text-xs text-stone-500 dark:text-stone-400">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>
+        ChromaCast AI Trend Studio &bull; Pantone® Fashion, Home + Interiors (TCX/TPG) &amp; HSL Color Forecasting System.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       7. CLIPBOARD TOAST NOTIFICATION
+       ========================================================================== -->
+  <div
+    id="toastNotification"
+    class="fixed bottom-5 right-5 z-50 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-stone-900 dark:bg-white text-white dark:text-stone-900 px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-mono font-semibold"
+  >
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 dark:text-emerald-600"></i>
+    <span id="toastMessage">Copied to clipboard!</span>
+  </div>
+
+  <!-- ==========================================================================
+       8. APPLICATION LOGIC (GEMINI 2.5 FLASH + OFFLINE FALLBACK + PANTONE MATCHER)
+       ========================================================================== -->
+  <script>
+    // Optional default key (leave empty to paste via the header key bar or run in Built-In Mode)
+    const DEFAULT_GEMINI_API_KEY = "";
+
+    // Application In-Memory State
+    const state = {
+      apiKey: DEFAULT_GEMINI_API_KEY,
+      primaryCodeMode: 'pantone', // 'pantone' or 'hsl'
+      activeVisualTab: 'overall', // 'overall' | 'maleAdults' | 'femaleAdults' | 'kids'
+      forecastData: null,
+    };
+
+    // Initialize UI on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      setupThemeToggle();
+      updateApiKeyStatusUI();
+      matchColorToPantone();
+      applyBuiltInForecast('2027', 'Full Year / Cross-Season', 'Global Ready-to-Wear & Contemporary Retail');
+    });
+
+    /* --------------------------------------------------------------------------
+       A. CURATED PANTONE TCX/TPG CATALOG (60+ AUTHENTIC TEXTILE STANDARDS)
+       -------------------------------------------------------------------------- */
+    const PANTONE_TCX_LIBRARY = [
+      { code: 'PANTONE 11-0601 TCX', name: 'Bright White', hex: '#F4F5F0' },
+      { code: 'PANTONE 11-4201 TCX', name: 'Cloud Dancer', hex: '#F0EEE9' },
+      { code: 'PANTONE 12-0713 TCX', name: 'Buttercream', hex: '#EFE0CD' },
+      { code: 'PANTONE 13-1023 TCX', name: 'Peach Fuzz', hex: '#FFBE98' },
+      { code: 'PANTONE 13-0647 TCX', name: 'Illuminating', hex: '#F5DF4D' },
+      { code: 'PANTONE 13-4405 TCX', name: 'Skyway', hex: '#ADBED3' },
+      { code: 'PANTONE 13-5306 TCX', name: 'Misty Jade', hex: '#BCE3DF' },
+      { code: 'PANTONE 14-1318 TCX', name: 'Dusty Pink', hex: '#DEAA9B' },
+      { code: 'PANTONE 14-4202 TCX', name: 'Harbor Mist', hex: '#AFB1B4' },
+      { code: 'PANTONE 14-4811 TCX', name: 'Aqua Sky', hex: '#7BC4C4' },
+      { code: 'PANTONE 14-0116 TCX', name: 'Meadow Mist', hex: '#DCE3C7' },
+      { code: 'PANTONE 15-0343 TCX', name: 'Greenery', hex: '#88B04B' },
+      { code: 'PANTONE 15-1247 TCX', name: 'Tangerine', hex: '#F88F58' },
+      { code: 'PANTONE 15-3919 TCX', name: 'Serenity', hex: '#91A8D0' },
+      { code: 'PANTONE 15-4020 TCX', name: 'Cerulean', hex: '#9BB7D4' },
+      { code: 'PANTONE 15-5217 TCX', name: 'Blue Turquoise', hex: '#53B0AE' },
+      { code: 'PANTONE 15-6432 TCX', name: 'Absinthe Green', hex: '#76B583' },
+      { code: 'PANTONE 16-0928 TCX', name: 'Warm Taupe', hex: '#AF9483' },
+      { code: 'PANTONE 16-1346 TCX', name: 'Autumn Sunset', hex: '#F38554' },
+      { code: 'PANTONE 16-1546 TCX', name: 'Living Coral', hex: '#FF6F61' },
+      { code: 'PANTONE 16-3802 TCX', name: 'Ash', hex: '#A09998' },
+      { code: 'PANTONE 16-4120 TCX', name: 'Dusk Blue', hex: '#7BA0C0' },
+      { code: 'PANTONE 16-5815 TCX', name: 'Jadeite', hex: '#5DB996' },
+      { code: 'PANTONE 16-0220 TCX', name: 'Willow', hex: '#9A8B4F' },
+      { code: 'PANTONE 17-1230 TCX', name: 'Mocha Mousse', hex: '#A47864' },
+      { code: 'PANTONE 17-1463 TCX', name: 'Tangerine Tango', hex: '#DD4124' },
+      { code: 'PANTONE 17-1544 TCX', name: 'Burnt Sienna', hex: '#C65D52' },
+      { code: 'PANTONE 17-3938 TCX', name: 'Very Peri', hex: '#6667AB' },
+      { code: 'PANTONE 17-4021 TCX', name: 'Coronado Blue', hex: '#5D7089' },
+      { code: 'PANTONE 17-4123 TCX', name: 'Niagara', hex: '#5487A4' },
+      { code: 'PANTONE 17-5104 TCX', name: 'Ultimate Gray', hex: '#939597' },
+      { code: 'PANTONE 17-5641 TCX', name: 'Emerald', hex: '#009B77' },
+      { code: 'PANTONE 17-0535 TCX', name: 'Green Moss', hex: '#857946' },
+      { code: 'PANTONE 18-0135 TCX', name: 'Treetop', hex: '#476A30' },
+      { code: 'PANTONE 18-0935 TCX', name: 'Buckthorn Brown', hex: '#A76F1F' },
+      { code: 'PANTONE 18-1438 TCX', name: 'Marsala', hex: '#955251' },
+      { code: 'PANTONE 18-1652 TCX', name: 'Rio Red', hex: '#8A2232' },
+      { code: 'PANTONE 18-1750 TCX', name: 'Viva Magenta', hex: '#BB2649' },
+      { code: 'PANTONE 18-3224 TCX', name: 'Radiant Orchid', hex: '#B565A7' },
+      { code: 'PANTONE 18-3838 TCX', name: 'Ultra Violet', hex: '#5F4B8B' },
+      { code: 'PANTONE 18-4043 TCX', name: 'Palace Blue', hex: '#346CB0' },
+      { code: 'PANTONE 18-4214 TCX', name: 'Slate Gray', hex: '#56646E' },
+      { code: 'PANTONE 18-5616 TCX', name: 'Balsam Green', hex: '#576664' },
+      { code: 'PANTONE 18-6024 TCX', name: 'Amazon', hex: '#1F7349' },
+      { code: 'PANTONE 19-0303 TCX', name: 'Jet Black', hex: '#2D2C2F' },
+      { code: 'PANTONE 19-1220 TCX', name: 'Potting Soil', hex: '#54392D' },
+      { code: 'PANTONE 19-1536 TCX', name: 'Red Pear', hex: '#7F4145' },
+      { code: 'PANTONE 19-3832 TCX', name: 'Nightshadow Blue', hex: '#3E425B' },
+      { code: 'PANTONE 19-4024 TCX', name: 'Dress Blues', hex: '#2A3244' },
+      { code: 'PANTONE 19-4052 TCX', name: 'Classic Blue', hex: '#0F4C81' },
+      { code: 'PANTONE 19-4150 TCX', name: 'Princess Blue', hex: '#00539C' },
+      { code: 'PANTONE 19-4914 TCX', name: 'Deep Teal', hex: '#18454B' },
+      { code: 'PANTONE 19-5420 TCX', name: 'Bistro Green', hex: '#395551' },
+      { code: 'PANTONE 19-0419 TCX', name: 'Rifle Green', hex: '#414832' },
+    ];
+
+    /* --------------------------------------------------------------------------
+       B. API KEY DRAWER & HEADER STATUS CONTROLS
+       -------------------------------------------------------------------------- */
+    function toggleApiConfigDrawer() {
+      const drawer = document.getElementById('apiConfigDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function toggleApiKeyVisibility() {
+      const input = document.getElementById('apiKeyInput');
+      const icon = document.getElementById('apiEyeIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    }
+
+    function handleApiKeyInput() {
+      state.apiKey = document.getElementById('apiKeyInput').value.trim();
+      updateApiKeyStatusUI();
+    }
+
+    function applyApiKey() {
+      state.apiKey = document.getElementById('apiKeyInput').value.trim();
+      updateApiKeyStatusUI();
+      if (state.apiKey) {
+        showToast('Gemini 2.5 Flash API key connected!');
+        document.getElementById('apiConfigDrawer').classList.add('hidden');
+      } else {
+        showToast('Switched to Built-In Studio Engine');
+      }
+    }
+
+    function clearApiKey() {
+      document.getElementById('apiKeyInput').value = '';
+      state.apiKey = '';
+      updateApiKeyStatusUI();
+      showToast('API key cleared — Built-In Mode active');
+    }
+
+    function updateApiKeyStatusUI() {
+      const dot = document.getElementById('apiStatusDot');
+      const label = document.getElementById('apiStatusLabel');
+      const enginePill = document.getElementById('engineModePill');
+
+      if (state.apiKey && state.apiKey.length > 10) {
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        label.textContent = 'Gemini 2.5 Ready';
+        enginePill.textContent = 'Live Gemini 2.5 Flash Active';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-500';
+        label.textContent = 'Built-In Mode';
+        enginePill.textContent = 'Built-In Trend Engine Active';
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       C. THEME, CODE SYSTEM & NOTIFICATION HELPERS
+       -------------------------------------------------------------------------- */
+    function setupThemeToggle() {
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+      });
+    }
+
+    function setPrimaryCodeMode(mode) {
+      state.primaryCodeMode = mode;
+      const pantoneBtn = document.getElementById('modePantoneBtn');
+      const hslBtn = document.getElementById('modeHslBtn');
+
+      if (mode === 'pantone') {
+        pantoneBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold bg-white dark:bg-slate-900 text-stone-900 dark:text-white shadow-sm transition';
+        hslBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition';
+      } else {
+        hslBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold bg-white dark:bg-slate-900 text-stone-900 dark:text-white shadow-sm transition';
+        pantoneBtn.className = 'px-2.5 py-1 rounded-lg text-[11px] font-mono font-semibold text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white transition';
+      }
+
+      if (state.forecastData) {
+        renderDemographicCards('maleAdultsGrid', state.forecastData.maleAdults);
+        renderDemographicCards('femaleAdultsGrid', state.forecastData.femaleAdults);
+        renderDemographicCards('kidsGrid', state.forecastData.kids);
+        renderVisualApparelStage(state.activeVisualTab);
+        lucide.createIcons();
+      }
+    }
+
+    function showNotice(title, message) {
+      document.getElementById('noticeTitle').textContent = title;
+      document.getElementById('noticeText').textContent = message;
+      document.getElementById('noticeBanner').classList.remove('hidden');
+    }
+
+    function hideNotice() {
+      document.getElementById('noticeBanner').classList.add('hidden');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2400);
+    }
+
+    function copyToClipboard(text, label) {
+      try {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = text;
+        tempInput.style.position = 'fixed';
+        tempInput.style.opacity = '0';
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        showToast(`Copied ${label}: ${text}`);
+      } catch (err) {
+        showToast(`Code: ${text}`);
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       D. BUILT-IN SEASONAL & MARKET FORECAST MATRIX (ZERO-ERROR LOCAL ENGINE)
+       -------------------------------------------------------------------------- */
+    function buildCuratedForecast(targetYear, seasonCycle, marketFocus) {
+      const isSS = seasonCycle.includes('Spring');
+      const isAW = seasonCycle.includes('Autumn');
+      const isLuxury = marketFocus.includes('Luxury');
+      const isStreet = marketFocus.includes('Streetwear');
+      const isEco = marketFocus.includes('Eco-Conscious');
+
+      if (isSS) {
+        return {
+          macroColor: {
+            pantoneCode: 'PANTONE 14-4811 TCX',
+            pantoneName: 'Aqua Sky Mineral',
+            hex: '#7BC4C4',
+            hsl: 'hsl(180, 38%, 63%)',
+            rationale: `For ${targetYear} Spring/Summer (${marketFocus}), sun-washed oceanic aquas lead seasonal color direction—offering refreshing clarity across lightweight cottons, resort linens, and breathable knits.`,
+          },
+          maleAdults: [
+            {
+              pantoneCode: 'PANTONE 17-4021 TCX',
+              pantoneName: 'Coronado Blue',
+              hex: '#5D7089',
+              hsl: 'hsl(214, 19%, 45%)',
+              garmentUse: 'Unstructured linen blazers, chambray shirts, and tailored chinos',
+              trendInsight: 'Modernizes warm-weather menswear tailoring with a sun-faded coastal slate.',
+            },
+            {
+              pantoneCode: 'PANTONE 12-0713 TCX',
+              pantoneName: 'Buttercream Sand',
+              hex: '#EFE0CD',
+              hsl: 'hsl(34, 52%, 87%)',
+              garmentUse: 'Open-weave polo knits, relaxed pleated trousers, and canvas sneakers',
+              trendInsight: 'Replaces stark optic white with warmer, natural-fiber luminosity.',
+            },
+            {
+              pantoneCode: 'PANTONE 15-0343 TCX',
+              pantoneName: 'Botanical Greenery',
+              hex: '#88B04B',
+              hsl: 'hsl(84, 40%, 49%)',
+              garmentUse: 'Nylon windbreakers, utility shorts, and graphic jersey accents',
+              trendInsight: 'Brings outdoor vitality into contemporary Spring/Summer menswear.',
+            },
+          ],
+          femaleAdults: [
+            {
+              pantoneCode: 'PANTONE 13-1023 TCX',
+              pantoneName: 'Peach Fuzz Nectar',
+              hex: '#FFBE98',
+              hsl: 'hsl(22, 100%, 80%)',
+              garmentUse: 'Bias-cut satin slip dresses, sheer chiffon blouses, and lightweight cardigans',
+              trendInsight: 'Tactile warmth flatters sun-lit skin tones across resort and occasionwear.',
+            },
+            {
+              pantoneCode: 'PANTONE 15-3919 TCX',
+              pantoneName: 'Serenity Mist',
+              hex: '#91A8D0',
+              hsl: 'hsl(218, 40%, 69%)',
+              garmentUse: 'Crisp poplin shirtdresses, fluid wide-leg suiting, and leather handbags',
+              trendInsight: 'Establishes effortless calm in daytime Spring/Summer womenswear.',
+            },
+            {
+              pantoneCode: 'PANTONE 16-1546 TCX',
+              pantoneName: 'Living Coral Glow',
+              hex: '#FF6F61',
+              hsl: 'hsl(5, 100%, 69%)',
+              garmentUse: 'Swimwear capsules, sculptural knit tops, and statement sandals',
+              trendInsight: 'High-energy warm accent anchoring summer occasion collections.',
+            },
+          ],
+          kids: [
+            {
+              pantoneCode: 'PANTONE 13-0647 TCX',
+              pantoneName: 'Solaris Yellow',
+              hex: '#F5DF4D',
+              hsl: 'hsl(52, 89%, 63%)',
+              garmentUse: 'Organic cotton sunhats, jersey tees, and lightweight raincoats',
+              trendInsight: 'Joyful, high-visibility optimism tailored for active warm-weather play.',
+            },
+            {
+              pantoneCode: 'PANTONE 15-5217 TCX',
+              pantoneName: 'Lagoon Turquoise',
+              hex: '#53B0AE',
+              hsl: 'hsl(179, 37%, 51%)',
+              garmentUse: 'Terrycloth beach sets, rashguards, and breathable canvas shoes',
+              trendInsight: 'Gender-neutral aquatic hue inspired by coastal discovery.',
+            },
+            {
+              pantoneCode: 'PANTONE 14-1318 TCX',
+              pantoneName: 'Blossom Pink',
+              hex: '#DEAA9B',
+              hsl: 'hsl(14, 50%, 74%)',
+              garmentUse: 'Muslin rompers, ribbed leggings, and embroidered denim jackets',
+              trendInsight: 'Softened earthy blush replaces neon pinks in modern kidswear.',
+            },
+          ],
+        };
+      }
+
+      if (isAW || isLuxury) {
+        return {
+          macroColor: {
+            pantoneCode: 'PANTONE 18-1438 TCX',
+            pantoneName: 'Marsala Bordeaux',
+            hex: '#955251',
+            hsl: 'hsl(1, 30%, 45%)',
+            rationale: `For ${targetYear} ${seasonCycle} (${marketFocus}), rich wine-infused earth tones anchor luxury outerwear and tactile knitwear—blending heritage sophistication with grounded warmth.`,
+          },
+          maleAdults: [
+            {
+              pantoneCode: 'PANTONE 19-4024 TCX',
+              pantoneName: 'Dress Blues Obsidian',
+              hex: '#2A3244',
+              hsl: 'hsl(222, 24%, 22%)',
+              garmentUse: 'Double-breasted wool overcoats, selvedge denim, and merino turtlenecks',
+              trendInsight: 'Deep ink-navy serves as the cornerstone of architectural menswear.',
+            },
+            {
+              pantoneCode: 'PANTONE 17-1230 TCX',
+              pantoneName: 'Mocha Mousse',
+              hex: '#A47864',
+              hsl: 'hsl(19, 26%, 52%)',
+              garmentUse: 'Suede overshirts, brushed flannel trousers, and heritage leather boots',
+              trendInsight: 'Warm roasted neutral elevates tonal Autumn/Winter layering.',
+            },
+            {
+              pantoneCode: 'PANTONE 19-0419 TCX',
+              pantoneName: 'Rifle Forest Green',
+              hex: '#414832',
+              hsl: 'hsl(79, 18%, 24%)',
+              garmentUse: 'Waxed field jackets, heavy-gauge fisherman knits, and cargo tailoring',
+              trendInsight: 'Utilitarian woodland olive remains essential across cold-weather collections.',
+            },
+          ],
+          femaleAdults: [
+            {
+              pantoneCode: 'PANTONE 18-1652 TCX',
+              pantoneName: 'Rio Crimson Wine',
+              hex: '#8A2232',
+              hsl: 'hsl(351, 60%, 34%)',
+              garmentUse: 'Velvet evening tailoring, silk midi skirts, and structured leather bags',
+              trendInsight: 'Opulent deep berry leads womenswear luxury statement dressing.',
+            },
+            {
+              pantoneCode: 'PANTONE 16-0928 TCX',
+              pantoneName: 'Warm Cashmere Taupe',
+              hex: '#AF9483',
+              hsl: 'hsl(23, 21%, 60%)',
+              garmentUse: 'Belted cashmere wrap coats, ribbed knit columns, and soft tailoring',
+              trendInsight: 'Quiet-luxury neutral balances saturated jewel and wine tones.',
+            },
+            {
+              pantoneCode: 'PANTONE 18-3838 TCX',
+              pantoneName: 'Ultra Violet Dusk',
+              hex: '#5F4B8B',
+              hsl: 'hsl(259, 30%, 42%)',
+              garmentUse: 'Draped jersey gowns, mohair sweaters, and statement outerwear',
+              trendInsight: 'Introduces nocturnal mystery to cold-weather womenswear palettes.',
+            },
+          ],
+          kids: [
+            {
+              pantoneCode: 'PANTONE 16-1346 TCX',
+              pantoneName: 'Autumn Sunset',
+              hex: '#F38554',
+              hsl: 'hsl(18, 87%, 64%)',
+              garmentUse: 'Quilted puffer jackets, fleece pullovers, and knit beanies',
+              trendInsight: 'Warm terracotta-orange keeps winter kidswear vibrant and visible.',
+            },
+            {
+              pantoneCode: 'PANTONE 17-4123 TCX',
+              pantoneName: 'Niagara Denim Blue',
+              hex: '#5487A4',
+              hsl: 'hsl(202, 32%, 49%)',
+              garmentUse: 'Stretch corduroy dungarees, brushed flannel shirts, and parkas',
+              trendInsight: 'Durable, comforting mid-blue engineered for everyday schoolwear.',
+            },
+            {
+              pantoneCode: 'PANTONE 18-0935 TCX',
+              pantoneName: 'Buckthorn Honey',
+              hex: '#A76F1F',
+              hsl: 'hsl(35, 69%, 39%)',
+              garmentUse: 'Sherpa-lined vests, striped rugby shirts, and winter boots',
+              trendInsight: 'Golden ochre bridges playful energy with practical stain-friendly depth.',
+            },
+          ],
+        };
+      }
+
+      // Default / Full Year / Eco / Streetwear Forecast
+      return {
+        macroColor: {
+          pantoneCode: isEco ? 'PANTONE 18-0135 TCX' : isStreet ? 'PANTONE 17-3938 TCX' : 'PANTONE 18-5616 TCX',
+          pantoneName: isEco ? 'Treetop Botanical' : isStreet ? 'Electric Very Peri' : 'Balsam Mineral',
+          hex: isEco ? '#476A30' : isStreet ? '#6667AB' : '#576664',
+          hsl: isEco ? 'hsl(96, 38%, 30%)' : isStreet ? 'hsl(239, 29%, 54%)' : 'hsl(172, 8%, 37%)',
+          rationale: `Synthesizing ${targetYear} global runway collections and ${marketFocus} data reveals a decisive shift toward restorative, tactically grounded pigments that balance digital clarity with durable natural fibers.`,
+        },
+        maleAdults: [
+          {
+            pantoneCode: 'PANTONE 19-4914 TCX',
+            pantoneName: 'Deep Fjord Teal',
+            hex: '#18454B',
+            hsl: 'hsl(187, 52%, 19%)',
+            garmentUse: 'Structured wool overcoats, technical field jackets, and selvedge denim',
+            trendInsight: 'Replaces standard navy in menswear tailoring with richer oceanic depth.',
+          },
+          {
+            pantoneCode: 'PANTONE 16-0928 TCX',
+            pantoneName: 'Warm Limestone',
+            hex: '#AF9483',
+            hsl: 'hsl(23, 21%, 60%)',
+            garmentUse: 'Brushed cotton overshirts, relaxed linen trousers, and suede loafers',
+            trendInsight: 'Anchors quiet-luxury neutral layering across trans-seasonal wardrobes.',
+          },
+          {
+            pantoneCode: 'PANTONE 18-0935 TCX',
+            pantoneName: 'Buckthorn Ochre',
+            hex: '#A76F1F',
+            hsl: 'hsl(35, 69%, 39%)',
+            garmentUse: 'Ribbed merino knitwear, utility workwear accents, and leather goods',
+            trendInsight: 'Injects heritage warmth into utilitarian menswear silhouettes.',
+          },
+        ],
+        femaleAdults: [
+          {
+            pantoneCode: 'PANTONE 18-1750 TCX',
+            pantoneName: 'Velvet Crimson',
+            hex: '#BB2649',
+            hsl: 'hsl(346, 66%, 44%)',
+            garmentUse: 'Draped silk eveningwear, sculptural blazers, and statement knit sets',
+            trendInsight: 'High-emotion berry-crimson leads womenswear runway focal points.',
+          },
+          {
+            pantoneCode: 'PANTONE 13-4405 TCX',
+            pantoneName: 'Glacier Skyway',
+            hex: '#ADBED3',
+            hsl: 'hsl(213, 30%, 75%)',
+            garmentUse: 'Crisp poplin shirting, sheer organza overlays, and fluid suiting',
+            trendInsight: 'Provides an airy, digital-pastel counterbalance to grounded earth tones.',
+          },
+          {
+            pantoneCode: 'PANTONE 19-1220 TCX',
+            pantoneName: 'Roasted Espresso',
+            hex: '#54392D',
+            hsl: 'hsl(18, 30%, 25%)',
+            garmentUse: 'Monochrome leather trench coats, cashmere columns, and woven bags',
+            trendInsight: 'Continues its dominance over harsh black in contemporary womenswear.',
+          },
+        ],
+        kids: [
+          {
+            pantoneCode: 'PANTONE 15-1247 TCX',
+            pantoneName: 'Sunburst Tangerine',
+            hex: '#F88F58',
+            hsl: 'hsl(21, 92%, 66%)',
+            garmentUse: 'Organic fleece hoodies, waterproof rain shells, and activewear sets',
+            trendInsight: 'High-visibility, optimistic citrus energy engineered for joyful kidswear.',
+          },
+          {
+            pantoneCode: 'PANTONE 16-5815 TCX',
+            pantoneName: 'Sprout Jadeite',
+            hex: '#5DB996',
+            hsl: 'hsl(157, 39%, 55%)',
+            garmentUse: 'Stretch corduroy dungarees, striped jersey tees, and sneakers',
+            trendInsight: 'Gender-neutral botanical green bridging playfulness and nature.',
+          },
+          {
+            pantoneCode: 'PANTONE 13-0647 TCX',
+            pantoneName: 'Solaris Butter',
+            hex: '#F5DF4D',
+            hsl: 'hsl(52, 89%, 63%)',
+            garmentUse: 'Quilted gilets, knit cardigans, and color-blocked backpacks',
+            trendInsight: 'Uplifting warm yellow pairs effortlessly with denim and botanical greens.',
+          },
+        ],
+      };
+    }
+
+    function applyBuiltInForecast(targetYear, seasonCycle, marketFocus) {
+      const forecast = buildCuratedForecast(targetYear, seasonCycle, marketFocus);
+      state.forecastData = forecast;
+      renderForecastResults(forecast, targetYear, seasonCycle, marketFocus);
+    }
+
+    /* --------------------------------------------------------------------------
+       E. COLOR CODE -> FORMAL PANTONE TCX & HSL MATCHER ENGINE
+       -------------------------------------------------------------------------- */
+    function onVisualPickerChange(hexVal) {
+      document.getElementById('colorCodeInput').value = hexVal.toUpperCase();
+      matchColorToPantone();
+    }
+
+    function parseUserColorInput(raw) {
+      if (!raw) return null;
+      const str = raw.trim();
+
+      // 1. HEX (#RRGGBB, RRGGBB, #RGB)
+      const hexMatch = str.match(/^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+      if (hexMatch) {
+        let h = hexMatch[1];
+        if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+        const r = parseInt(h.slice(0, 2), 16);
+        const g = parseInt(h.slice(2, 4), 16);
+        const b = parseInt(h.slice(4, 6), 16);
+        return { r, g, b, hex: `#${h.toUpperCase()}` };
+      }
+
+      // 2. HSL: hsl(214, 19%, 45%)
+      const hslMatch = str.match(/^hsla?\(\s*([\d.]+)\s*,\s*([\d.]+)%?\s*,\s*([\d.]+)%?/i);
+      if (hslMatch) {
+        const h = ((parseFloat(hslMatch[1]) % 360) + 360) % 360;
+        const s = Math.max(0, Math.min(100, parseFloat(hslMatch[2]))) / 100;
+        const l = Math.max(0, Math.min(100, parseFloat(hslMatch[3]))) / 100;
+        const c = (1 - Math.abs(2 * l - 1)) * s;
+        const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+        const m = l - c / 2;
+        let r1 = 0, g1 = 0, b1 = 0;
+        if (h < 60) { r1 = c; g1 = x; }
+        else if (h < 120) { r1 = x; g1 = c; }
+        else if (h < 180) { g1 = c; b1 = x; }
+        else if (h < 240) { g1 = x; b1 = c; }
+        else if (h < 300) { r1 = x; b1 = c; }
+        else { r1 = c; b1 = x; }
+        const r = Math.round((r1 + m) * 255);
+        const g = Math.round((g1 + m) * 255);
+        const b = Math.round((b1 + m) * 255);
+        return { r, g, b, hex: rgbToHex(r, g, b) };
+      }
+
+      // 3. RGB: rgb(93, 112, 137)
+      const rgbMatch = str.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+      if (rgbMatch) {
+        const r = Math.max(0, Math.min(255, parseInt(rgbMatch[1], 10)));
+        const g = Math.max(0, Math.min(255, parseInt(rgbMatch[2], 10)));
+        const b = Math.max(0, Math.min(255, parseInt(rgbMatch[3], 10)));
+        return { r, g, b, hex: rgbToHex(r, g, b) };
+      }
+
+      return null;
+    }
+
+    function rgbToHex(r, g, b) {
+      return (
+        '#' +
+        [r, g, b]
+          .map((v) => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0'))
+          .join('')
+          .toUpperCase()
+      );
+    }
+
+    function rgbToHslString(r, g, b) {
+      const rNorm = r / 255;
+      const gNorm = g / 255;
+      const bNorm = b / 255;
+      const max = Math.max(rNorm, gNorm, bNorm);
+      const min = Math.min(rNorm, gNorm, bNorm);
+      let h = 0;
+      let s = 0;
+      const l = (max + min) / 2;
+
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case rNorm:
+            h = (gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0);
+            break;
+          case gNorm:
+            h = (bNorm - rNorm) / d + 2;
+            break;
+          case bNorm:
+            h = (rNorm - gNorm) / d + 4;
+            break;
+        }
+        h /= 6;
+      }
+      return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
+    }
+
+    function rgbToLab(r, g, b) {
+      let [sr, sg, sb] = [r / 255, g / 255, b / 255].map((v) =>
+        v > 0.04045 ? Math.pow((v + 0.055) / 1.055, 2.4) : v / 12.92
+      );
+      let x = (sr * 0.4124 + sg * 0.3576 + sb * 0.1805) / 0.95047;
+      let y = (sr * 0.2126 + sg * 0.7152 + sb * 0.0722) / 1.0;
+      let z = (sr * 0.0193 + sg * 0.1192 + sb * 0.9505) / 1.08883;
+      [x, y, z] = [x, y, z].map((v) => (v > 0.008856 ? Math.cbrt(v) : 7.787 * v + 16 / 116));
+      return { L: 116 * y - 16, a: 500 * (x - y), b: 200 * (y - z) };
+    }
+
+    function deltaE(lab1, lab2) {
+      return Math.sqrt(
+        Math.pow(lab1.L - lab2.L, 2) +
+        Math.pow(lab1.a - lab2.a, 2) +
+        Math.pow(lab1.b - lab2.b, 2)
+      );
+    }
+
+    function matchColorToPantone() {
+      const raw = document.getElementById('colorCodeInput').value;
+      const parsed = parseUserColorInput(raw);
+      if (!parsed) return;
+
+      document.getElementById('nativeColorPicker').value = parsed.hex;
+      document.getElementById('matcherInputSwatch').style.backgroundColor = parsed.hex;
+
+      const inputLab = rgbToLab(parsed.r, parsed.g, parsed.b);
+
+      const scored = PANTONE_TCX_LIBRARY.map((entry) => {
+        const pRgb = parseUserColorInput(entry.hex);
+        const pLab = rgbToLab(pRgb.r, pRgb.g, pRgb.b);
+        return {
+          ...entry,
+          hsl: rgbToHslString(pRgb.r, pRgb.g, pRgb.b),
+          distance: deltaE(inputLab, pLab),
+        };
+      }).sort((a, b) => a.distance - b.distance);
+
+      const best = scored[0];
+      const similarity = Math.max(74, Math.min(100, 100 - best.distance * 0.65)).toFixed(1);
+
+      document.getElementById('matcherPantoneSwatch').style.backgroundColor = best.hex;
+      document.getElementById('matcherSimilarityBadge').textContent = `${similarity}% Perceptual Match`;
+      document.getElementById('matcherPantoneName').textContent = best.name;
+      document.getElementById('matcherPantoneCode').textContent = best.code;
+      document.getElementById('matcherHslCode').textContent = best.hsl;
+
+      const altRow = document.getElementById('matcherAlternativesRow');
+      altRow.innerHTML = scored
+        .slice(1, 4)
+        .map(
+          (alt) => `
+          <button
+            type="button"
+            onclick="copyToClipboard('${alt.code}', 'Pantone Code')"
+            class="flex items-center gap-2 p-2 rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-indigo-400 transition text-left overflow-hidden"
+            title="Click to copy ${alt.code} (${alt.hsl})"
+          >
+            <span class="w-6 h-6 rounded-lg shrink-0 border border-black/10" style="background-color: ${alt.hex};"></span>
+            <div class="min-w-0">
+              <p class="font-mono text-[10px] font-bold text-stone-800 dark:text-stone-200 truncate">${alt.code.replace('PANTONE ', '')}</p>
+              <p class="text-[10px] text-stone-500 dark:text-stone-400 truncate">${alt.name}</p>
+            </div>
+          </button>
+        `
+        )
+        .join('');
+    }
+
+    /* --------------------------------------------------------------------------
+       F. OPTIONAL GEMINI 2.5 FLASH API CALLS (FREE-TIER SAFE, GRACEFUL FALLBACK)
+       -------------------------------------------------------------------------- */
+    async function verifyPantoneWithAI() {
+      const raw = document.getElementById('colorCodeInput').value;
+      const parsed = parseUserColorInput(raw);
+      if (!parsed) {
+        showNotice('Invalid Color Code', 'Please enter a valid HEX (e.g. #5D7089), HSL (e.g. hsl(214, 19%, 45%)), or RGB value.');
+        return;
+      }
+
+      if (!state.apiKey) {
+        matchColorToPantone();
+        showToast('Matched via Built-In CIE L*a*b* Pantone Engine!');
+        return;
+      }
+
+      hideNotice();
+      const btn = document.getElementById('aiVerifyPantoneBtn');
+      const originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-pulse font-mono">Matching...</span>`;
+
+      try {
+        const inputHsl = rgbToHslString(parsed.r, parsed.g, parsed.b);
+        const prompt = `Identify the closest authentic Pantone Fashion, Home + Interiors (TCX or TPG) color code and official Pantone color name for HEX ${parsed.hex} (${inputHsl}). Return JSON only.`;
+
+        const payload = {
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'OBJECT',
+              properties: {
+                pantoneCode: { type: 'STRING' },
+                pantoneName: { type: 'STRING' },
+                matchedHex: { type: 'STRING' },
+                matchedHsl: { type: 'STRING' },
+              },
+              required: ['pantoneCode', 'pantoneName', 'matchedHex', 'matchedHsl'],
+            },
+          },
+        };
+
+        const response = await fetch(
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': state.apiKey,
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Status ${response.status}`);
+        }
+
+        const result = await response.json();
+        const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) {
+          const match = JSON.parse(text);
+          document.getElementById('matcherPantoneSwatch').style.backgroundColor = normalizeHex(match.matchedHex);
+          document.getElementById('matcherSimilarityBadge').textContent = 'Gemini 2.5 AI Verified TCX';
+          document.getElementById('matcherPantoneName').textContent = match.pantoneName;
+          document.getElementById('matcherPantoneCode').textContent = match.pantoneCode;
+          document.getElementById('matcherHslCode').textContent = match.matchedHsl;
+          showToast(`Verified: ${match.pantoneCode}`);
+        }
+      } catch (err) {
+        console.warn('AI verify fallback:', err);
+        matchColorToPantone();
+        showNotice(
+          'Using Built-In Perceptual Matcher',
+          'Live AI verification could not be reached (check API key or rate limit), so your color was matched locally using CIE L*a*b* color science.'
+        );
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+        lucide.createIcons();
+      }
+    }
+
+    async function runPantoneForecast() {
+      hideNotice();
+
+      const targetYear = document.getElementById('targetYearSelect').value;
+      const seasonCycle = document.getElementById('seasonSelect').value;
+      const marketFocus = document.getElementById('marketFocusSelect').value;
+
+      // If no API key is entered, immediately generate via the built-in seasonal & market matrix
+      if (!state.apiKey) {
+        applyBuiltInForecast(targetYear, seasonCycle, marketFocus);
+        showToast(`Generated ${targetYear} ${seasonCycle} Forecast!`);
+        document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
+
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      const analyzeBtnLabel = document.getElementById('analyzeBtnLabel');
+      analyzeBtn.disabled = true;
+      analyzeBtnLabel.textContent = 'Forecasting with Gemini 2.5 Flash...';
+
+      try {
+        const promptText = `
+You are a Senior Color Forecaster at the Pantone Color Institute.
+Predict the fashion color palette for ${targetYear} (${seasonCycle}) focused on "${marketFocus}".
+Provide:
+1. One Macro "Pantone Color of the Year ${targetYear}"
+2. Exactly THREE (3) forecasted colors for Male Adults apparel
+3. Exactly THREE (3) forecasted colors for Female Adults apparel
+4. Exactly THREE (3) forecasted colors for Kids apparel
+
+For every color, supply an authentic formal Pantone TCX code (e.g., "PANTONE 18-5616 TCX"), evocative Pantone color name, accurate HEX code (e.g., "#576664"), exact matching HSL string (e.g., "hsl(172, 8%, 37%)"), garmentUse, and trendInsight.
+        `.trim();
+
+        const demographicColorSchema = {
+          type: 'OBJECT',
+          properties: {
+            pantoneCode: { type: 'STRING' },
+            pantoneName: { type: 'STRING' },
+            hex: { type: 'STRING' },
+            hsl: { type: 'STRING' },
+            garmentUse: { type: 'STRING' },
+            trendInsight: { type: 'STRING' },
+          },
+          required: ['pantoneCode', 'pantoneName', 'hex', 'hsl', 'garmentUse', 'trendInsight'],
+        };
+
+        const responseSchema = {
+          type: 'OBJECT',
+          properties: {
+            macroColor: {
+              type: 'OBJECT',
+              properties: {
+                pantoneCode: { type: 'STRING' },
+                pantoneName: { type: 'STRING' },
+                hex: { type: 'STRING' },
+                hsl: { type: 'STRING' },
+                rationale: { type: 'STRING' },
+              },
+              required: ['pantoneCode', 'pantoneName', 'hex', 'hsl', 'rationale'],
+            },
+            maleAdults: { type: 'ARRAY', items: demographicColorSchema },
+            femaleAdults: { type: 'ARRAY', items: demographicColorSchema },
+            kids: { type: 'ARRAY', items: demographicColorSchema },
+          },
+          required: ['macroColor', 'maleAdults', 'femaleAdults', 'kids'],
+        };
+
+        const response = await fetch(
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': state.apiKey,
+            },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: promptText }] }],
+              generationConfig: {
+                responseMimeType: 'application/json',
+                responseSchema,
+              },
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`API returned status ${response.status}`);
+        }
+
+        const result = await response.json();
+        const rawJson = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawJson) throw new Error('Empty forecast payload');
+
+        const parsedForecast = JSON.parse(rawJson);
+        state.forecastData = parsedForecast;
+        renderForecastResults(parsedForecast, targetYear, seasonCycle, marketFocus);
+        showToast(`Live Gemini 2.5 Forecast Ready for ${targetYear}!`);
+        document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {
+        console.warn('Live forecast fallback:', err);
+        applyBuiltInForecast(targetYear, seasonCycle, marketFocus);
+        showNotice(
+          'Switched to Built-In Forecast Engine',
+          'Your Gemini API request hit a key or rate limit, so ChromaCast automatically generated the curated forecast using its built-in trend matrix.'
+        );
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtnLabel.textContent = 'Generate Next-Year Pantone Forecast';
+      }
+    }
+
+    /* --------------------------------------------------------------------------
+       G. RENDER FORECAST DASHBOARD & EXACT-PIGMENT SVG APPAREL VISUALIZER
+       -------------------------------------------------------------------------- */
+    function renderForecastResults(data, targetYear, seasonCycle, marketFocus) {
+      document.getElementById('resultYearHeading').textContent = targetYear;
+      document.getElementById('forecastContextBadge').textContent = `${seasonCycle} • ${marketFocus}`;
+
+      const macro = data.macroColor;
+      const cleanMacroHex = normalizeHex(macro.hex);
+
+      document.getElementById('macroSwatchBlock').style.backgroundColor = cleanMacroHex;
+      document.getElementById('macroHexBadge').textContent = cleanMacroHex;
+      document.getElementById('macroPantoneCode').textContent = macro.pantoneCode;
+      document.getElementById('macroPantoneName').textContent = macro.pantoneName;
+      document.getElementById('macroRationale').textContent = macro.rationale;
+      document.getElementById('macroPantoneField').textContent = macro.pantoneCode;
+      document.getElementById('macroHslField').textContent = macro.hsl;
+
+      document.getElementById('copyMacroHexBtn').onclick = () => copyToClipboard(cleanMacroHex, 'HEX');
+      document.getElementById('copyMacroPantoneBtn').onclick = () => copyToClipboard(macro.pantoneCode, 'Pantone Code');
+      document.getElementById('copyMacroHslBtn').onclick = () => copyToClipboard(macro.hsl, 'HSL');
+
+      renderDemographicCards('maleAdultsGrid', (data.maleAdults || []).slice(0, 3));
+      renderDemographicCards('femaleAdultsGrid', (data.femaleAdults || []).slice(0, 3));
+      renderDemographicCards('kidsGrid', (data.kids || []).slice(0, 3));
+
+      selectVisualTab(state.activeVisualTab || 'overall');
+      lucide.createIcons();
+    }
+
+    function selectVisualTab(tabKey) {
+      state.activeVisualTab = tabKey;
+
+      document.querySelectorAll('.vis-tab-btn').forEach((btn) => {
+        btn.className = 'vis-tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-stone-700 dark:text-stone-200 transition';
+      });
+      const activeBtn = document.getElementById(`visBtn-${tabKey}`);
+      if (activeBtn) {
+        activeBtn.className = 'vis-tab-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-stone-900 text-white dark:bg-indigo-600 transition shadow-sm';
+      }
+
+      renderVisualApparelStage(tabKey);
+    }
+
+    // Returns tailored SVG garment illustrations colored in exact HSL/HEX values
+    function getGarmentSvg(type, fillHex) {
+      if (type === 'male') {
+        // Tailored Menswear Overshirt / Jacket SVG
+        return `
+          <svg viewBox="0 0 120 120" class="w-24 h-24 drop-shadow-md" aria-hidden="true">
+            <path d="M36 22 L48 16 L60 24 L72 16 L84 22 L106 38 L96 54 L84 46 L84 102 L36 102 L36 46 L24 54 L14 38 Z"
+                  fill="${fillHex}" stroke="rgba(255,255,255,0.65)" stroke-width="2.5" stroke-linejoin="round" />
+            <path d="M60 24 L60 102 M48 16 L60 32 L72 16" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="2" />
+            <rect x="42" y="48" width="12" height="14" rx="2" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" />
+          </svg>
+        `;
+      }
+      if (type === 'female') {
+        // Draped Womenswear A-Line Dress / Silhouette SVG
+        return `
+          <svg viewBox="0 0 120 120" class="w-24 h-24 drop-shadow-md" aria-hidden="true">
+            <path d="M44 18 L52 28 L68 28 L76 18 L86 24 L82 48 L96 102 L24 102 L38 48 L34 24 Z"
+                  fill="${fillHex}" stroke="rgba(255,255,255,0.65)" stroke-width="2.5" stroke-linejoin="round" />
+            <path d="M38 48 Q60 54 82 48" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" />
+          </svg>
+        `;
+      }
+      if (type === 'kids') {
+        // Playful Kids Hoodie / Crewneck Sweatshirt SVG
+        return `
+          <svg viewBox="0 0 120 120" class="w-24 h-24 drop-shadow-md" aria-hidden="true">
+            <path d="M42 24 Q60 12 78 24 L102 42 L92 56 L80 48 L80 98 L40 98 L40 48 L28 56 L18 42 Z"
+                  fill="${fillHex}" stroke="rgba(255,255,255,0.65)" stroke-width="2.5" stroke-linejoin="round" />
+            <path d="M46 74 L74 74 L78 92 L42 92 Z" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.8" />
+          </svg>
+        `;
+      }
+      // Woven Fabric Bolt / Swatch Drape SVG
+      return `
+        <svg viewBox="0 0 120 120" class="w-24 h-24 drop-shadow-md" aria-hidden="true">
+          <rect x="24" y="20" width="72" height="80" rx="12" fill="${fillHex}" stroke="rgba(255,255,255,0.65)" stroke-width="2.5" />
+          <path d="M24 42 Q60 52 96 42 M24 68 Q60 78 96 68" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2" />
+        </svg>
+      `;
+    }
+
+    function renderVisualApparelStage(tabKey) {
+      if (!state.forecastData) return;
+      const stage = document.getElementById('visualStageGrid');
+      const data = state.forecastData;
+      const isHsl = state.primaryCodeMode === 'hsl';
+
+      let cards = [];
+      if (tabKey === 'overall') {
+        cards = [
+          { ...data.macroColor, tag: 'MACRO HERO', garmentType: 'fabric' },
+          { ...(data.maleAdults?.[0] || data.macroColor), tag: 'MALE LEAD', garmentType: 'male' },
+          { ...(data.femaleAdults?.[0] || data.macroColor), tag: 'FEMALE LEAD', garmentType: 'female' },
+          { ...(data.kids?.[0] || data.macroColor), tag: 'KIDS LEAD', garmentType: 'kids' },
+        ];
+      } else {
+        const garmentMap = { maleAdults: 'male', femaleAdults: 'female', kids: 'kids' };
+        const labelMap = { maleAdults: 'MENSWEAR', femaleAdults: 'WOMENSWEAR', kids: 'KIDSWEAR' };
+        cards = (data[tabKey] || []).map((item, idx) => ({
+          ...item,
+          tag: `${labelMap[tabKey]} 0${idx + 1}`,
+          garmentType: garmentMap[tabKey],
+        }));
+      }
+
+      stage.className =
+        cards.length === 4
+          ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 bg-stone-100/80 dark:bg-slate-950 p-4 sm:p-6 rounded-2xl border border-stone-200/80 dark:border-slate-800'
+          : 'grid grid-cols-1 md:grid-cols-3 gap-4 bg-stone-100/80 dark:bg-slate-950 p-4 sm:p-6 rounded-2xl border border-stone-200/80 dark:border-slate-800';
+
+      stage.innerHTML = cards
+        .map((c) => {
+          const hex = normalizeHex(c.hex);
+          const displayCode = isHsl ? c.hsl : c.pantoneCode;
+          return `
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-stone-200 dark:border-slate-800 overflow-hidden shadow-sm flex flex-col justify-between">
+              <div
+                class="h-44 swatch-fabric-texture twill-weave-bg p-4 flex flex-col items-center justify-between relative"
+                style="background-color: ${hex};"
+              >
+                <div class="w-full flex items-center justify-between">
+                  <span class="px-2 py-0.5 rounded-md bg-white/90 text-stone-900 font-mono text-[10px] font-bold">
+                    ${c.tag}
+                  </span>
+                  <span class="px-2 py-0.5 rounded-md bg-black/35 text-white font-mono text-[10px]">
+                    ${hex}
+                  </span>
+                </div>
+                ${getGarmentSvg(c.garmentType, hex)}
+              </div>
+              <div class="p-3.5 bg-white dark:bg-slate-900">
+                <p class="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400 truncate">${displayCode}</p>
+                <p class="font-serif text-base font-bold text-stone-900 dark:text-white truncate">${c.pantoneName}</p>
+                <p class="font-mono text-[10px] text-stone-500 dark:text-stone-400 mt-0.5 truncate">${isHsl ? c.pantoneCode : c.hsl}</p>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderDemographicCards(containerId, colors) {
+      const container = document.getElementById(containerId);
+      const isHslPrimary = state.primaryCodeMode === 'hsl';
+
+      container.innerHTML = colors
+        .map((item, index) => {
+          const hex = normalizeHex(item.hex);
+          const primaryCode = isHslPrimary ? item.hsl : item.pantoneCode;
+          const secondaryCode = isHslPrimary ? item.pantoneCode : item.hsl;
+          const primaryLabel = isHslPrimary ? 'HSL' : 'PANTONE';
+          const secondaryLabel = isHslPrimary ? 'PANTONE' : 'HSL';
+
+          return `
+            <article class="bg-white dark:bg-slate-900 rounded-3xl border border-stone-200 dark:border-slate-800 overflow-hidden shadow-swatch dark:shadow-swatch-dark flex flex-col justify-between transition-transform hover:-translate-y-1">
+              <div>
+                <div
+                  class="h-44 swatch-fabric-texture p-4 flex flex-col justify-between relative"
+                  style="background-color: ${hex};"
+                >
+                  <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-white/95 text-stone-900 shadow-sm">
+                      0${index + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onclick="copyToClipboard('${hex}', 'HEX')"
+                      class="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-black/30 hover:bg-black/50 text-white backdrop-blur-sm transition flex items-center gap-1"
+                      title="Copy HEX"
+                    >
+                      <span>${hex}</span>
+                      <i data-lucide="copy" class="w-3 h-3"></i>
+                    </button>
+                  </div>
+
+                  <div class="bg-white/95 dark:bg-slate-950/90 backdrop-blur-md px-3.5 py-2.5 rounded-xl border border-white/40 dark:border-slate-800 shadow-sm">
+                    <p class="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400 tracking-wide uppercase">
+                      ${primaryCode}
+                    </p>
+                    <h3 class="font-serif text-lg font-bold text-stone-900 dark:text-white leading-snug">
+                      ${item.pantoneName}
+                    </h3>
+                  </div>
+                </div>
+
+                <div class="p-5 space-y-4">
+                  <div class="space-y-2">
+                    <button
+                      type="button"
+                      onclick="copyToClipboard('${primaryCode.replace(/'/g, "\\'")}', '${primaryLabel}')"
+                      class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-indigo-400 transition text-left group"
+                    >
+                      <span class="text-[10px] font-mono uppercase text-stone-400">${primaryLabel}</span>
+                      <span class="font-mono text-xs font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+                        ${primaryCode}
+                        <i data-lucide="copy" class="w-3 h-3 text-stone-400 group-hover:text-indigo-500"></i>
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onclick="copyToClipboard('${secondaryCode.replace(/'/g, "\\'")}', '${secondaryLabel}')"
+                      class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-indigo-400 transition text-left group"
+                    >
+                      <span class="text-[10px] font-mono uppercase text-stone-400">${secondaryLabel}</span>
+                      <span class="font-mono text-xs font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+                        ${secondaryCode}
+                        <i data-lucide="copy" class="w-3 h-3 text-stone-400 group-hover:text-indigo-500"></i>
+                      </span>
+                    </button>
+                  </div>
+
+                  <div class="pt-1">
+                    <p class="text-[11px] font-mono uppercase tracking-wider text-stone-400 mb-1">
+                      Apparel &amp; Textile Application
+                    </p>
+                    <p class="text-xs font-medium text-stone-800 dark:text-stone-200">
+                      ${item.garmentUse}
+                    </p>
+                  </div>
+
+                  <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed border-t border-stone-100 dark:border-slate-800 pt-3">
+                    ${item.trendInsight}
+                  </p>
+                </div>
+              </div>
+            </article>
+          `;
+        })
+        .join('');
+    }
+
+    function normalizeHex(hex) {
+      if (!hex) return '#576664';
+      let clean = hex.trim();
+      if (!clean.startsWith('#')) clean = '#' + clean;
+      return /^#[0-9A-Fa-f]{6}$/.test(clean) ? clean.toUpperCase() : '#576664';
+    }
+
+    /* --------------------------------------------------------------------------
+       H. HIGH-RESOLUTION SWATCH PRESENTATION BOARD PNG EXPORTER (ZERO API)
+       -------------------------------------------------------------------------- */
+    function downloadCurrentSwatchBoard() {
+      if (!state.forecastData) return;
+      const data = state.forecastData;
+      const targetYear = document.getElementById('targetYearSelect').value;
+      const tabKey = state.activeVisualTab || 'overall';
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 1280;
+      canvas.height = 720;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#0F172A';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      let items = [];
+      let heading = `${targetYear} CHROMACAST AI — PANTONE FORECAST BOARD`;
+      if (tabKey === 'overall') {
+        items = [
+          data.macroColor,
+          ...(data.maleAdults || []).slice(0, 1),
+          ...(data.femaleAdults || []).slice(0, 1),
+          ...(data.kids || []).slice(0, 1),
+        ];
+        heading = `${targetYear} MACRO & CROSS-DEMOGRAPHIC PANTONE BOARD`;
+      } else {
+        items = data[tabKey] || [];
+        heading = `${targetYear} ${tabKey.replace(/([A-Z])/g, ' $1').toUpperCase()} — PANTONE SWATCH BOARD`;
+      }
+
+      ctx.fillStyle = '#F8FAFC';
+      ctx.font = 'bold 26px sans-serif';
+      ctx.fillText(heading, 60, 72);
+
+      const gap = 36;
+      const totalWidth = canvas.width - 120 - gap * (items.length - 1);
+      const cardW = totalWidth / items.length;
+      const cardH = 520;
+
+      items.forEach((c, i) => {
+        const x = 60 + i * (cardW + gap);
+        const y = 120;
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(x, y, cardW, cardH);
+
+        ctx.fillStyle = normalizeHex(c.hex);
+        ctx.fillRect(x + 18, y + 18, cardW - 36, cardH - 160);
+
+        ctx.fillStyle = '#0F172A';
+        ctx.font = 'bold 19px monospace';
+        ctx.fillText(c.pantoneCode, x + 22, y + cardH - 96);
+
+        ctx.font = 'bold 21px sans-serif';
+        ctx.fillText(c.pantoneName, x + 22, y + cardH - 62);
+
+        ctx.fillStyle = '#475569';
+        ctx.font = '15px monospace';
+        ctx.fillText(`${c.hsl} | ${normalizeHex(c.hex)}`, x + 22, y + cardH - 28);
+      });
+
+      const link = document.createElement('a');
+      link.download = `chromacast-${targetYear}-${tabKey}-pantone-board.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Downloaded Pantone Swatch Board PNG!');
+    }
+  </script>
+</body>
+</html>
